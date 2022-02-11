@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Users;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Users\RegistrationRequest;
+use App\Http\Controllers\User\RegistrationRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class Registration extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Registers a new user.
      *
      * @param  \App\Http\Controllers\Users\RegistrationRequest  $request
      * @return \Illuminate\Http\JsonResponse
@@ -23,11 +22,6 @@ class Registration extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
-        // Auth::attempt([
-        //     'email' => $request->email,
-        //     'password' => $request->password
-        // ]);
 
         return response()->json([
             'message' => "Регистрация успешно завершена"
