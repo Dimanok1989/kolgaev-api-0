@@ -19,7 +19,7 @@ class Login extends Controller
         $data = $request->only('email', 'password');
 
         if (!Auth::attempt($data))
-            return response()->json(['message' => "Ошибка авторизации"], 401);
+            return response()->json(['message' => "Неверный логин или пароль"], 401);
 
         $user = Auth::user();
 
