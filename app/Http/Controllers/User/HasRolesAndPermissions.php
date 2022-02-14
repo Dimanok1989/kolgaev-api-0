@@ -109,6 +109,23 @@ trait HasRolesAndPermissions
     }
 
     /**
+     * All permissions owned by the user.
+     * 
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function allPermissions()
+    {
+        $permissions = $this->permissions;
+
+        foreach ($this->roles as $role) {
+            foreach ($role->permissions as $permission)
+                $permissions->push($permission);
+        }
+        
+        return $permissions->unique();
+    }
+
+    /**
      * Adds a roles to a user.
      * 
      * @param array<int> $ids
