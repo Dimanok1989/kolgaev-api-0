@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\Permission;
 use App\Models\Role;
 
-trait Scopes
+trait HasRolesAndPermissions
 {
     /**
      * Verified permissions
@@ -106,5 +106,77 @@ trait Scopes
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'user_permission');
+    }
+
+    /**
+     * Adds a roles to a user.
+     * 
+     * @param array<int> $ids
+     * @return null
+     */
+    public function assignRole(...$ids)
+    {
+        $available = $this->roles()->whereIn('id', $ids)->get()->map(function ($row) {
+            return $row->id;
+        })->toArray();
+
+        foreach ($ids as $id) {
+
+            if (!in_array($id, $available))
+                $this->roles()->attach($id);
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieve a roles from a user.
+     * 
+     * @param array<int> $ids
+     * @return null
+     */
+    public function unassignRole(...$ids)
+    {
+        $this->roles()->whereIn('id', $ids)->each(function ($row) {
+            $this->roles()->detach($row->id);
+        });
+
+        return null;
+    }
+
+    /**
+     * Adds a permissions to a user.
+     * 
+     * @param array<int> $ids
+     * @return null
+     */
+    public function assignPermission(...$ids)
+    {
+        $available = $this->permissions()->whereIn('id', $ids)->get()->map(function ($row) {
+            return $row->id;
+        })->toArray();
+
+        foreach ($ids as $id) {
+
+            if (!in_array($id, $available))
+                $this->permissions()->attach($id);
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieve a permissions from a user.
+     * 
+     * @param array<int> $ids
+     * @return null
+     */
+    public function unassignPermission(...$ids)
+    {
+        $this->permissions()->whereIn('id', $ids)->each(function ($row) {
+            $this->permissions()->detach($row->id);
+        });
+
+        return null;
     }
 }
