@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
             $table->string('permission', 255)->unique();
-            $table->string('name', 255)->nullable()->comment('Name permit');
             $table->text('comment')->nullable();
             $table->timestamps();
         });
