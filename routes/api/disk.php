@@ -3,4 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 /** Главная страница диска */
-Route::post('/', 'Disk\Disk@index');
+Route::get('/', 'Disk\Disk@index');
+
+/** Файлы пользователя */
+Route::get('files', 'Disk\Files@index');
