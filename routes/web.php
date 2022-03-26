@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/ip', function (\Illuminate\Http\Request $request) {
+    return response([
+        'ip' => $request->ip(),
+        'remote_addr' => $request->server('REMOTE_ADDR'),
+        'headers' => $request->header(),
+    ]);
+});
