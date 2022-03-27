@@ -30,6 +30,8 @@ class Upload extends Controller
                 'size' => $request->size,
                 'ext' => $ext,
                 'mime_type' => $request->type,
+                'is_uploads' => true,
+                'last_modified' => $request->date ?: now(),
             ]);
 
             $this->create($file);
@@ -42,11 +44,17 @@ class Upload extends Controller
         $put->send($chunk);
 
         $size = Storage::size($path);
+        $uploaded = $size >= $file->size;
+
+        if ($uploaded)
+            $file->is_uploads = false;
+
+        $file->save();
 
         return response()->json([
             'file' => $file,
             'size' => $size,
-            'uploaded' => $size == $file->size,
+            'uploaded' => $uploaded,
         ]);
     }
 

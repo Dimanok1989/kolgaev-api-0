@@ -22,5 +22,19 @@ class DiskFile extends Model
         'size',
         'ext',
         'mime_type',
+        'is_hide',
+        'is_uploads',
+        'last_modified',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_hide' => 'boolean',
+        'is_uploads' => 'boolean',
+        'last_modified' => 'datetime',
     ];
 }
