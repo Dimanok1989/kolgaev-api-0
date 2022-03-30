@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('disk_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('dir')->comment('Путь до каталога с файлом');
-            $table->string('file_name')->comment('Наименование файла');
+            $table->string('dir')->nullable()->comment('Путь до каталога с файлом');
+            $table->string('file_name')->nullable()->comment('Наименование файла');
             $table->string('name')->comment('Отображаемое имя файла');
             $table->bigInteger('size')->default(0)->comment('Размер файла');
             $table->string('ext', 50)->nullable()->comment('Расширение файла');

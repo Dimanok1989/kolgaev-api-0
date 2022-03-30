@@ -44,18 +44,34 @@ class Upload extends Controller
         $put->send($chunk);
 
         $size = Storage::size($path);
-        $uploaded = $size >= $file->size;
-
-        if ($uploaded)
-            $file->is_uploads = false;
+        $file->is_uploads = !($size >= $file->size);
 
         $file->save();
+
+        if (!$file->is_uploads) {
+            $this->attach($request->dir ?: Disk::getUserMainDirId($request->user()->id), $file->id);
+        }
 
         return response()->json([
             'file' => $file,
             'size' => $size,
-            'uploaded' => $uploaded,
+            'uploaded' => $file->is_uploads,
         ]);
+    }
+
+    /**
+     * Записать отношение файла к каталогу
+     * 
+     * @param int $dir_id
+     * @param int $file_id
+     * @return null
+     */
+    public function attach($dir_id, $file_id)
+    {
+        if (!$dir = DiskFile::find($dir_id))
+            return null;
+
+        $dir->files()->attach($file_id);
     }
 
     /**

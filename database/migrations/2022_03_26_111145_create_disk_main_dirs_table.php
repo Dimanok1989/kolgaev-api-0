@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('disk_dirs', function (Blueprint $table) {
+        Schema::create('disk_main_dirs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('name')->nullable()->comment('Наименование каталога');
-            $table->tinyInteger('is_main')->default(0)->comment('Является главным каталогом пользователя');
+            $table->foreignId('disk_file_id')->constrained();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('disk_dirs');
+        Schema::dropIfExists('disk_main_dirs');
     }
 };

@@ -22,6 +22,7 @@ class DiskFile extends Model
         'size',
         'ext',
         'mime_type',
+        'is_dir',
         'is_hide',
         'is_uploads',
         'last_modified',
@@ -33,8 +34,19 @@ class DiskFile extends Model
      * @var array
      */
     protected $casts = [
+        'is_dir' => 'boolean',
         'is_hide' => 'boolean',
         'is_uploads' => 'boolean',
         'last_modified' => 'datetime',
     ];
+
+    /**
+     * File-to-Directory Relationship
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function files()
+    {
+        return $this->belongsToMany(DiskFile::class, 'disk_file_to_dir', 'dir_id', 'file_id');
+    }
 }

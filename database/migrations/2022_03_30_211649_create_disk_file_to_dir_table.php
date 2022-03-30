@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('disk_dir_user', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('disk_dir_id')->constrained();
+        Schema::create('disk_file_to_dir', function (Blueprint $table) {
+            $table->foreignId('dir_id')->constrained('disk_files')->cascadeOnDelete();
+            $table->foreignId('file_id')->constrained('disk_files')->cascadeOnDelete();
+            $table->unique(['dir_id', 'file_id'], 'dir_id_file_id');
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('disk_dir_user');
+        Schema::dropIfExists('disk_file_to_dir');
     }
 };
