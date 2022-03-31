@@ -16,6 +16,7 @@ class Files extends Controller
      */
     public function index(Request $request)
     {
+        $request->dir = $request->dir ? $this->linkToDec($request->dir) : null;
         $request->dir = $request->dir ?: Disk::getUserMainDirId($request->user()->id);
 
         $dir = DiskFile::find($request->dir);
@@ -25,12 +26,30 @@ class Files extends Controller
 
         $files = $dir->files()
             ->orderBy('is_dir', 'DESC')
-            ->get();
+            ->get()
+            ->map(function ($row) {
+                return $this->serialize($row);
+            });
 
         return response()->json([
-            'dir' => encrypt($request->dir),
+            'dir' => $request->dir,
             'files' => $files,
             'page' => $request->page ?: 1,
         ]);
+    }
+
+    /**
+     * Формирование строки файла
+     * 
+     * @param \App\Models\DiskFile $row
+     * @return \App\Models\DiskFile $row
+     */
+    public function serialize(DiskFile $row)
+    {
+        $row->icon = $row->is_dir ? "folder" : IconsNames::get($row->ext);
+
+        $row->link = $this->decToLink($row->id);
+
+        return $row;
     }
 }
