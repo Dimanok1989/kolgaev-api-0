@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Disk;
 
+use App\Events\Disk\NewFile;
 use App\Http\Controllers\Controller;
 use App\Models\DiskFile;
 use Illuminate\Http\Request;
@@ -49,7 +50,15 @@ class Upload extends Controller
         $file->save();
 
         if (!$file->is_uploads) {
-            $this->attach($request->dir ?: Disk::getUserMainDirId($request->user()->id), $file->id);
+
+            $dir = $this->linkToDec($request->dir) ?: Disk::getUserMainDirId($request->user()->id);
+
+            $this->attach($dir, $file->id);
+
+            broadcast(new NewFile(
+                (new Files)->serialize($file),
+                $this->decToLink($dir)
+            ));
         }
 
         return response()->json([

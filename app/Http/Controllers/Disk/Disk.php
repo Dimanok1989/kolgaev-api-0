@@ -18,7 +18,7 @@ class Disk extends Controller
     public function index(Request $request)
     {
         return response()->json([
-            'main_dir' => $this->getUserMainDirId($request->user()->id),
+            'main_dir' => $this->decToLink($this->getUserMainDirId($request->user()->id)),
         ]);
     }
 

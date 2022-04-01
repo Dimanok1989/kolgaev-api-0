@@ -42,7 +42,7 @@ class Files extends Controller
      * Формирование строки файла
      * 
      * @param  \App\Models\DiskFile $row
-     * @return \App\Models\DiskFile $row
+     * @return array
      */
     public function serialize(DiskFile $row)
     {
@@ -50,7 +50,7 @@ class Files extends Controller
 
         $row->link = $this->decToLink($row->id);
 
-        return $row;
+        return $row->toArray();
     }
 
     /**

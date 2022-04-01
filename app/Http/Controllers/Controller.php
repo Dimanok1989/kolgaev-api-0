@@ -14,11 +14,14 @@ class Controller extends BaseController
     /**
      * Преобразовывает текстовый идентификатор в число
      *
-     * @param  string $link
+     * @param  string|null $link
      * @return int
      */
-    static function linkToDec($link)
+    static function linkToDec($link = null)
     {
+        if (!$link)
+            return 0;
+
         $digits = [
             '0' => 0, '1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8, '9' => 9,
             'a' => 10, 'b' => 11, 'c' => 12, 'd' => 13, 'e' => 14, 'f' => 15, 'g' => 16, 'h' => 17, 'i' => 18,
