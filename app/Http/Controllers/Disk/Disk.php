@@ -23,6 +23,19 @@ class Disk extends Controller
     }
 
     /**
+     * Определеяет идентификатор каталога по текстовому идентификатору
+     * 
+     * @param  string|null $id
+     * @return int
+     */
+    public static function getFolderId($id = null)
+    {
+        $ind = $id ? parent::linkToDec($id) : null;
+
+        return $ind ?: self::getUserMainDirId(optional(request()->user())->id);
+    }
+
+    /**
      * Выводит идентификатор клавного каталога пользователя
      * 
      * @param int $id

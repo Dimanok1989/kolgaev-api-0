@@ -10,3 +10,6 @@ Route::get('files', 'Disk\Files@index');
 
 /** Загрузка файла */
 Route::put('upload', 'Disk\Upload');
+
+/** Создание каталога */
+Route::post('folder/create', 'Disk\Files@createFolder');

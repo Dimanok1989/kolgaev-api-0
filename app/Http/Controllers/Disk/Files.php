@@ -11,13 +11,12 @@ class Files extends Controller
     /**
      * Список файлов пользователя
      * 
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $request->dir = $request->dir ? $this->linkToDec($request->dir) : null;
-        $request->dir = $request->dir ?: Disk::getUserMainDirId($request->user()->id);
+        $request->dir = Disk::getFolderId($request->dir);
 
         $dir = DiskFile::find($request->dir);
 
@@ -26,6 +25,7 @@ class Files extends Controller
 
         $files = $dir->files()
             ->orderBy('is_dir', 'DESC')
+            ->orderBy('name')
             ->get()
             ->map(function ($row) {
                 return $this->serialize($row);
@@ -41,7 +41,7 @@ class Files extends Controller
     /**
      * Формирование строки файла
      * 
-     * @param \App\Models\DiskFile $row
+     * @param  \App\Models\DiskFile $row
      * @return \App\Models\DiskFile $row
      */
     public function serialize(DiskFile $row)
@@ -51,5 +51,36 @@ class Files extends Controller
         $row->link = $this->decToLink($row->id);
 
         return $row;
+    }
+
+    /**
+     * Создание каталога
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * 
+     * @todo Добавить проверка общего доступа
+     */
+    public function createFolder(Request $request)
+    {
+        $request->dir = Disk::getFolderId($request->dir);
+
+        if (!$dir = DiskFile::find($request->dir))
+            return response()->json(['message' => "Каталог не найден или уже удален"], 400);
+
+        if ($dir->user_id != $request->user()->id)
+            return response()->json(['message' => "Доступ к каталогу ограничен"], 403);
+
+        $file = DiskFile::create([
+            'user_id' => $request->user()->id,
+            'name' => $request->name ?: "Новая папка",
+            'is_dir' => true,
+        ]);
+
+        $dir->files()->attach($file->id);
+
+        return response()->json([
+            'file' => $this->serialize($file),
+        ]);
     }
 }
