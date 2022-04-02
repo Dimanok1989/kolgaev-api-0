@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Disk;
 
 use App\Events\Disk\NewFile;
 use App\Http\Controllers\Controller;
+use App\Jobs\Disk\CreateThubnailsJob;
 use App\Models\DiskFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +26,7 @@ class Upload extends Controller
 
             $file = DiskFile::create([
                 'user_id' => $request->user()->id,
-                'dir' => "drive/" . date("Y/m/d/H"),
+                'dir' => date("Y/m/d/H"),
                 'file_name' => Str::orderedUuid() . ($ext ? "." . $ext : ""),
                 'name' => $request->name,
                 'size' => $request->size,
@@ -39,7 +40,7 @@ class Upload extends Controller
         }
 
         $chunk = base64_decode($request->chunk);
-        $path = $this->getPath($file->dir, $file->file_name);
+        $path = $this->getPath(env("DRIVE_DIR", "drive"), $file->dir, $file->file_name);
 
         $put = $this->putChunk($path);
         $put->send($chunk);
@@ -59,6 +60,10 @@ class Upload extends Controller
                 (new Files)->serialize($file),
                 $this->decToLink($dir)
             ));
+
+            if (in_array($file->mime_type, Thumbs::mimeTypes())) {
+                CreateThubnailsJob::dispatch($file);
+            }
         }
 
         return response()->json([
@@ -107,12 +112,12 @@ class Upload extends Controller
      */
     public function create(DiskFile $file)
     {
-        $path = $this->getPath($file->dir, $file->file_name);
+        $path = $this->getPath(env("DRIVE_DIR", "drive"), $file->dir, $file->file_name);
 
         while (Storage::exists($path)) {
 
             $file->file_name = Str::orderedUuid() . ($file->ext ? "." . $file->ext : "");
-            $path = $this->getPath($file->dir, $file->file_name);
+            $path = $this->getPath(env("DRIVE_DIR", "drive"), $file->dir, $file->file_name);
         }
 
         $file->save();

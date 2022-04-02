@@ -17,6 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+/** Вывод миниатюр */
+Route::get('thumbs/{a?}/{b?}/{c?}/{d?}/{e?}', 'Disk\Thumbs@view');
+
 Route::get('/ip', function (\Illuminate\Http\Request $request) {
     return response([
         'ip' => $request->ip(),
