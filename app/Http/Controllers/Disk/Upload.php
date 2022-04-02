@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Disk;
 
 use App\Events\Disk\NewFile;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Disk\Thumbs\Images;
 use App\Jobs\Disk\CreateThubnailsJob;
 use App\Models\DiskFile;
 use Illuminate\Http\Request;
@@ -61,7 +62,7 @@ class Upload extends Controller
                 $this->decToLink($dir)
             ));
 
-            if (in_array($file->mime_type, Thumbs::mimeTypes())) {
+            if (in_array($file->mime_type, Images::mimeTypes())) {
                 CreateThubnailsJob::dispatch($file);
             }
         }

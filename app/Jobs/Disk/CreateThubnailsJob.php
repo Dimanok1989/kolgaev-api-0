@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Disk;
 
-use App\Http\Controllers\Disk\Thumbs;
+use App\Http\Controllers\Disk\Thumbs\Images;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,6 +33,6 @@ class CreateThubnailsJob implements ShouldQueue
      */
     public function handle()
     {
-        (new Thumbs)->create($this->file);
+        (new Images)->create($this->file);
     }
 }
