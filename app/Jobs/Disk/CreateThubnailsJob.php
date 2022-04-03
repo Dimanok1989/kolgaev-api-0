@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Disk;
 
+use App\Http\Controllers\Disk\Files;
 use App\Http\Controllers\Disk\Thumbs\Images;
 use App\Http\Controllers\Disk\Thumbs\Videos;
 use Illuminate\Bus\Queueable;
@@ -10,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Str;
 
 class CreateThubnailsJob implements ShouldQueue
 {
@@ -37,7 +37,7 @@ class CreateThubnailsJob implements ShouldQueue
     {
         if (in_array($this->file->mime_type, Images::mimeTypes())) {
             $thumb = new Images;
-        } else if (Str::startsWith($this->file->mime_type, 'video/')) {
+        } else if (Files::is_video($this->file->mime_type)) {
             $thumb = new Videos;
         }
 

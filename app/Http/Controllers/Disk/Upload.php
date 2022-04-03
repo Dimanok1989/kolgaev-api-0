@@ -62,7 +62,7 @@ class Upload extends Controller
                 $this->decToLink($dir)
             ));
 
-            if (in_array($file->mime_type, Images::mimeTypes()) or Str::startsWith($file->mime_type, 'video/')) {
+            if (in_array($file->mime_type, Images::mimeTypes()) or Files::is_video($file->mime_type)) {
                 CreateThubnailsJob::dispatch($file);
             }
         }

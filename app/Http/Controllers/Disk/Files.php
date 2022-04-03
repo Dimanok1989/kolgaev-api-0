@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Disk;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Disk\Thumbs\Images;
 use App\Models\DiskFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Files extends Controller
 {
@@ -68,13 +70,38 @@ class Files extends Controller
 
         $row->link = $this->decToLink($row->id);
 
+        $row->is_video = $this->is_video($row->mime_type);
+        $row->is_image = $this->is_image($row->mime_type);
+
         return $row->toArray();
+    }
+
+    /**
+     * Определяет по mime-типу является файл видеороликом
+     * 
+     * @param  string $mime_type
+     * @return boolean
+     */
+    public static function is_video($mime_type)
+    {
+        return (bool) Str::startsWith((string) $mime_type, 'video/');
+    }
+
+    /**
+     * Определяет по mime-типу является файл изображением
+     * 
+     * @param  string $mime_type
+     * @return boolean
+     */
+    public static function is_image($mime_type)
+    {
+        return (bool) in_array($mime_type, Images::mimeTypes());
     }
 
     /**
      * Создание каталога
      * 
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      * 
      * @todo Добавить проверка общего доступа
