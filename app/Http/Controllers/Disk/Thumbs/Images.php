@@ -6,8 +6,6 @@ use App\Events\Disk\UpdateFile;
 use App\Http\Controllers\Disk\Files;
 use App\Http\Controllers\Disk\Thumbs;
 use App\Models\DiskFile;
-use Intervention\Image\Image;
-use Illuminate\Support\Facades\Storage;
 
 class Images extends Thumbs
 {
@@ -21,20 +19,6 @@ class Images extends Thumbs
         'image/png',
         'image/gif'
     ];
-
-    /**
-     * Ширина миниатюры
-     * 
-     * @var int
-     */
-    protected $litle = 100;
-
-    /**
-     * Ширина картинки для просмотра
-     * 
-     * @var int
-     */
-    protected $middle = 1920;
 
     /**
      * Выводит список типов для конвертации
@@ -64,42 +48,15 @@ class Images extends Thumbs
         if (!$row)
             return false;
 
-        $path = env("DRIVE_DIR", "drive") . "/" . $row->dir;
-        Storage::makeDirectory($path . "/thumbs");
+        $thumbs = $this->getThumbsPaths($row);
 
-        $row->thumb_litle = $this->getThumbName($row->ext);
+        $this->resize($thumbs->full_path_file, $thumbs->full_path_litle);
+        $this->resize($thumbs->full_path_file, $thumbs->full_path_middle);
 
-        while (Storage::exists("{$path}/thumbs/{$row->thumb_litle}"))
-            $row->thumb_litle = $this->getThumbName($row->ext);
-
-        $row->thumb_middle = $this->getThumbName($row->ext);
-
-        while (Storage::exists("{$path}/thumbs/{$row->thumb_middle}"))
-            $row->thumb_middle = $this->getThumbName($row->ext);
-
-        $image = \Intervention\Image\Facades\Image::make(Storage::path($path . "/" . $row->file_name));
-
-        $params = $this->getParams($image);
-
-        $thumb_litle = Storage::path("{$path}/thumbs/{$row->thumb_litle}");
-
-        $litle = $image->resize($params['litle']['whdth'], $params['litle']['height'], function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        $litle->save($thumb_litle, 60);
-
-        $thumb_middle = Storage::path("{$path}/thumbs/{$row->thumb_middle}");
-
-        $middle = $image->resize($params['middle']['whdth'], $params['middle']['height'], function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        $middle->save($thumb_middle, 60);
-
+        $row->thumb_litle = $thumbs->litle_name;
+        $row->thumb_middle = $thumbs->middle_name;
         $row->thumb_at = now();
+
         $row->save();
 
         broadcast(new UpdateFile(
@@ -107,41 +64,5 @@ class Images extends Thumbs
         ));
 
         return $row;
-    }
-
-    /**
-     * Определяет параметры для миниатюр
-     * 
-     * @param  \Intervention\Image\Image $image
-     * @return array
-     */
-    public function getParams(Image $image)
-    {
-        $exif = $image->exif('COMPUTED');
-
-        $w = $exif['Width'] ?? null;
-        $h = $exif['Height'] ?? null;
-
-        $params['litle']['whdth'] = null;
-        $params['litle']['height'] = null;
-        $params['middle']['whdth'] = null;
-        $params['middle']['height'] = null;
-
-        /** Определение ширины и высоты */
-        if ($w !== null && $h !== null) {
-
-            if ($w >= $h) {
-                $params['litle']['whdth'] = $this->litle;
-                $params['middle']['whdth'] = $this->middle;
-            } else {
-                $params['litle']['height'] = $this->litle;
-                $params['middle']['height'] = $this->middle;
-            }
-        } else {
-            $params['litle']['whdth'] = $this->litle;
-            $params['middle']['whdth'] = $this->middle;
-        }
-
-        return $params;
     }
 }
