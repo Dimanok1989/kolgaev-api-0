@@ -58,12 +58,12 @@ class Files extends Controller
 
             $row->thumb_litle_url = env("APP_URL") . "/thumbs/{$dir}/{$row->thumb_litle}";
 
-            // $img = Storage::path("{$row->dir}/thumbs/{$row->thumb_litle}");
+            $img = Storage::path("{$row->dir}/thumbs/{$row->thumb_litle}");
 
-            // $imageSize = getimagesize($img);
-            // $imageData = base64_encode(file_get_contents($img));
+            $imageSize = getimagesize($img);
+            $imageData = base64_encode(file_get_contents($img));
 
-            // $row->thumb_litle_url = "data:{$imageSize['mime']};base64,{$imageData}";
+            $row->thumb_litle_url = "data:{$imageSize['mime']};base64,{$imageData}";
         }
 
         $row->icon = $row->is_dir ? "folder" : IconsNames::get($row->ext);

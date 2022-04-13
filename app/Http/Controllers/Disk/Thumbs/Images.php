@@ -50,8 +50,8 @@ class Images extends Thumbs
 
         $thumbs = $this->getThumbsPaths($row);
 
-        $this->resize($thumbs->full_path_file, $thumbs->full_path_litle);
-        $this->resize($thumbs->full_path_file, $thumbs->full_path_middle);
+        $this->resize($thumbs->full_path_file, $thumbs->full_path_litle, "litle");
+        $this->resize($thumbs->full_path_file, $thumbs->full_path_middle, "middle");
 
         $row->thumb_litle = $thumbs->litle_name;
         $row->thumb_middle = $thumbs->middle_name;

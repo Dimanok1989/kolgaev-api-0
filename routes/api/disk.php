@@ -13,3 +13,9 @@ Route::put('upload', 'Disk\Upload');
 
 /** Создание каталога */
 Route::post('folder/create', 'Disk\Files@createFolder');
+
+/** Выводит данные для просмотра фотокарточки */
+Route::post('view/image', 'Disk\Views\Images@get');
+
+/** Выводит фотокарточку */
+Route::get('photo', 'Disk\Views\Images@photo');

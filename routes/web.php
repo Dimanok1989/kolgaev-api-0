@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('login', function () {
+    return abort(404);
+})->name('login');
+
 /** Вывод миниатюр */
 Route::get('thumbs/{a?}/{b?}/{c?}/{d?}/{e?}', 'Disk\Thumbs@view');
 

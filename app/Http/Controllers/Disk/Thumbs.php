@@ -152,18 +152,20 @@ class Thumbs
      * 
      * @param  \Intervention\Image\Image|string $image  Исходное изображение
      * @param  string $path  Путь конечного изображения
-     * @param  null|int $width  Ширина конечного изображения
-     * @param  null|int $height  Высота конечного изображения
+     * @param  null|int $type  Тип миниатюры (`litle`, `middle`)
      * @param  int $quality  Качество сжатия
      * @return \Intervention\Image\Image
      */
-    public function resize($image, $path, $quality = 60)
+    public function resize($image, $path, $type = "litle", $quality = 60)
     {
         $image = $image instanceof Image ? $image : FacadesImage::make($image);
 
         $params = $this->getImageParams($image);
 
-        $thumb = $image->resize($params['litle']['whdth'], $params['litle']['height'], function ($constraint) {
+        $width = $params[$type]['width'] ?? null;
+        $height = $params[$type]['height'] ?? null;
+
+        $thumb = $image->resize($width, $height ?? null, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
@@ -184,24 +186,24 @@ class Thumbs
         $w = $exif['Width'] ?? null;
         $h = $exif['Height'] ?? null;
 
-        $params['litle']['whdth'] = null;
+        $params['litle']['width'] = null;
         $params['litle']['height'] = null;
-        $params['middle']['whdth'] = null;
+        $params['middle']['width'] = null;
         $params['middle']['height'] = null;
 
         /** Определение ширины и высоты */
         if ($w !== null && $h !== null) {
 
             if ($w >= $h) {
-                $params['litle']['whdth'] = $this->litle;
-                $params['middle']['whdth'] = $this->middle > $w ? $w : $this->middle;
+                $params['litle']['width'] = $this->litle;
+                $params['middle']['width'] = $this->middle > $w ? $w : $this->middle;
             } else {
                 $params['litle']['height'] = $this->litle;
                 $params['middle']['height'] = $this->middle > $h ? $h : $this->middle;
             }
         } else {
-            $params['litle']['whdth'] = $this->litle;
-            $params['middle']['whdth'] = $this->middle;
+            $params['litle']['width'] = $this->litle;
+            $params['middle']['Width'] = $this->middle;
         }
 
         return $params;
