@@ -25,11 +25,14 @@ class Upload extends Controller
 
             $ext = pathinfo($request->name)['extension'] ?? null;
 
+            $dir = $this->linkToDec($request->dir) ?: Disk::getUserMainDirId($request->user()->id);
+            $name = Files::getUniqueFileName(DiskFile::find($dir), $request->name ?: "Новый файл");
+
             $file = DiskFile::create([
                 'user_id' => $request->user()->id,
                 'dir' => date("Y/m/d/H"),
                 'file_name' => Str::orderedUuid() . ($ext ? "." . $ext : ""),
-                'name' => $request->name,
+                'name' => $name,
                 'size' => $request->size,
                 'ext' => $ext,
                 'mime_type' => $request->type,

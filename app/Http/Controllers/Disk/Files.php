@@ -145,7 +145,7 @@ class Files extends Controller
         $count = 1;
 
         $extension = (new SplFileInfo($name))->getExtension();
-        $basename = $is_dir ? $name : Str::of($name)->replace($extension, "");
+        $basename = $is_dir ? $name : Str::of($name)->replace(".{$extension}", "");
 
         while ((bool) $dir->files()->where('name', $name)->count()) {
 
