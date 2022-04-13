@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Disk\Views;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Disk\Disk;
 use App\Models\DiskFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,12 @@ class Images extends Controller
      */
     public function check(Request $request)
     {
-        if (!$this->dir = DiskFile::find($this->linkToDec($request->folder)))
+        $folder_id = is_string($request->input('folder')) ? $this->linkToDec($request->input('folder')) : null;
+
+        if ($folder_id === 0)
+            $folder_id = Disk::getUserMainDirId($request->user()->id);
+
+        if (!$this->dir = DiskFile::find($folder_id))
             return response()->json(['message' => "Каталог с фотокарточкой не найден"], 404);
 
         if (!$row = $this->dir->files()->where('id', $this->linkToDec($request->id))->first())
@@ -60,11 +66,13 @@ class Images extends Controller
     public function getNextId($id)
     {
         $row = $this->dir->files()
-            ->where('id', '>', $id)
+            ->where('id', $id)
+            ->where('thumb_at', '!=', null)
             ->orderBy('name')
-            ->first();
+            ->offset(1)
+            ->get();
 
-        return isset($row->id) ? $this->decToLink($row->id) : null;
+        return isset($row[0]->id) ? $this->decToLink($row->id) : null;
     }
 
     /**
@@ -76,11 +84,13 @@ class Images extends Controller
     public function getPrevId($id)
     {
         $row = $this->dir->files()
-            ->where('id', '<', $id)
+            ->where('id', $id)
+            ->where('thumb_at', '!=', null)
             ->orderBy('name', "DESC")
-            ->first();
+            ->offset(1)
+            ->get();
 
-        return isset($row->id) ? $this->decToLink($row->id) : null;
+        return isset($row[0]->id) ? $this->decToLink($row->id) : null;
     }
 
     /**

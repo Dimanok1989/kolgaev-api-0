@@ -36,13 +36,18 @@ class Disk extends Controller
     }
 
     /**
-     * Выводит идентификатор клавного каталога пользователя
+     * Выводит идентификатор главного каталога пользователя
      * 
-     * @param int $id
-     * @return int
+     * @param  null|int $id
+     * @return null|int
      */
-    public static function getUserMainDirId($id)
+    public static function getUserMainDirId($id = null)
     {
+        $id = $id ?: optional(request()->user())->id;
+
+        if (!$id)
+            return null;
+
         if ($row = DiskMainDir::whereUserId($id)->first())
             return $row->disk_file_id;
 
