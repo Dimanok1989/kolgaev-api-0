@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Disk;
 
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Disk\Thumbs\Images;
 use App\Models\DiskFile;
 use Illuminate\Http\Request;
@@ -10,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use SplFileInfo;
 
-class Files extends Controller
+class Files extends Disk
 {
     /**
      * Список файлов пользователя
@@ -20,12 +19,12 @@ class Files extends Controller
      */
     public function index(Request $request)
     {
-        $request->dir = Disk::getFolderId($request->dir);
+        $dir_id = $this->getFolderIdFromPath($request->dir ?: "");
 
-        $dir = DiskFile::find($request->dir);
+        $dir = DiskFile::find($dir_id);
 
         if (!($dir->is_dir ?? null))
-            return response()->json(['message' => "Каталг с файлами не найден или был удален"], 404);
+            return response()->json(['message' => "Каталог с файлами не найден или был удален"], 404);
 
         $files = $dir->files()
             ->orderBy('is_dir', 'DESC')
@@ -36,9 +35,10 @@ class Files extends Controller
             });
 
         return response()->json([
-            'dir' => $request->dir,
+            'dir' => $dir_id,
             'files' => $files,
             'page' => $request->page ?: 1,
+            'breadcrumbs' => $this->getBreadCrumbs($request->dir ?: ""),
         ]);
     }
 
@@ -109,9 +109,9 @@ class Files extends Controller
      */
     public function createFolder(Request $request)
     {
-        $request->dir = Disk::getFolderId($request->dir);
+        $dir_id = $this->getFolderIdFromPath($request->dir ?: "");
 
-        if (!$dir = DiskFile::find($request->dir))
+        if (!$dir = DiskFile::find($dir_id))
             return response()->json(['message' => "Каталог не найден или уже удален"], 400);
 
         if ($dir->user_id != $request->user()->id)

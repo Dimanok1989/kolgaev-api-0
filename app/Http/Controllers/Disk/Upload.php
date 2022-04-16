@@ -25,7 +25,7 @@ class Upload extends Controller
 
             $ext = pathinfo($request->name)['extension'] ?? null;
 
-            $dir = $this->linkToDec($request->dir) ?: Disk::getUserMainDirId($request->user()->id);
+            $dir = Disk::getFolderIdFromPath($request->dir);
             $name = Files::getUniqueFileName(DiskFile::find($dir), $request->name ?: "Новый файл");
 
             $file = DiskFile::create([
@@ -56,13 +56,13 @@ class Upload extends Controller
 
         if (!$file->is_uploads) {
 
-            $dir = $this->linkToDec($request->dir) ?: Disk::getUserMainDirId($request->user()->id);
+            $dir = $dir ?? Disk::getFolderIdFromPath($request->dir);
 
             $this->attach($dir, $file->id);
 
             broadcast(new NewFile(
                 (new Files)->serialize($file),
-                $this->decToLink($dir)
+                $request->dir
             ));
 
             if (in_array($file->mime_type, Images::mimeTypes()) or Files::is_video($file->mime_type)) {

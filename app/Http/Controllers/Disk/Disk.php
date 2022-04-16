@@ -36,6 +36,32 @@ class Disk extends Controller
     }
 
     /**
+     * Определяет идентификатор каталога по пути
+     * 
+     * @param  string $path
+     * @return int
+     */
+    public static function getFolderIdFromPath($path)
+    {
+        $path = self::getPathFolder($path);
+
+        return self::getFolderId(
+            end($path)
+        );
+    }
+
+    /**
+     * Определяет идентификаторы каталогов в пути
+     * 
+     * @param  string $path
+     * @return array
+     */
+    public static function getPathFolder($path)
+    {
+        return explode("/", $path);
+    }
+
+    /**
      * Выводит идентификатор главного каталога пользователя
      * 
      * @param  null|int $id
@@ -64,5 +90,43 @@ class Disk extends Controller
         ]);
 
         return $dir->id;
+    }
+
+    /**
+     * Формирует хлебные крошки
+     * 
+     * @param  string|array $path
+     * @return array
+     */
+    public function getBreadCrumbs($path)
+    {
+        if (is_string($path))
+            $path = $this->getPathFolder($path);
+
+        foreach ($path as &$dir)
+            if ($dir = $this->getRowBreadCrumbs($this->getFolderId($dir)))
+                $paths[] = $dir;
+
+        return $paths ?? [];
+    }
+
+    /**
+     * Формирует массив хлебной крошки
+     * 
+     * @param  int|null $id
+     * @return array|null
+     */
+    public function getRowBreadCrumbs($id = null)
+    {
+        if (!$row = DiskFile::find($id))
+            return null;
+
+        $row->link = $this->decToLink($row->id);
+
+        return $row->only(
+            'id',
+            'name',
+            'link'
+        );
     }
 }
