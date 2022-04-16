@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Disk\Views;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Disk\Disk;
+use App\Http\Controllers\Disk\Thumbs\Images as ThumbsImages;
 use App\Models\DiskFile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,45 +53,49 @@ class Images extends Controller
         return response()->json([
             'id' => $request->id,
             'folder' => $request->folder,
-            'prev' => $this->getPrevId($row->id),
-            'next' => $this->getNextId($row->id),
+            'prev' => $this->getPrevId($row->name),
+            'next' => $this->getNextId($row->name),
         ]);
     }
 
     /**
      * Определяет индентификатор следующего фото
      * 
-     * @param  int $id
+     * @param  string $name
      * @return null|string
      */
-    public function getNextId($id)
+    public function getNextId($name)
     {
-        $row = $this->dir->files()
-            ->where('id', $id)
+        $this->next = $row = $this->dir->files()
+            ->select('id')
+            ->where('name', '>=', $name)
+            ->whereIn('mime_type', ThumbsImages::mimeTypes())
             ->where('thumb_at', '!=', null)
             ->orderBy('name')
-            ->offset(1)
+            ->limit(2)
             ->get();
 
-        return isset($row[0]->id) ? $this->decToLink($row->id) : null;
+        return isset($row[1]->id) ? $this->decToLink($row[1]->id) : null;
     }
 
     /**
      * Определяет индентификатор предыдущего фото
      * 
-     * @param  int $id
+     * @param  string $name
      * @return null|string
      */
-    public function getPrevId($id)
+    public function getPrevId($name)
     {
         $row = $this->dir->files()
-            ->where('id', $id)
+            ->select('id')
+            ->where('name', '<=', $name)
+            ->whereIn('mime_type', ThumbsImages::mimeTypes())
             ->where('thumb_at', '!=', null)
             ->orderBy('name', "DESC")
-            ->offset(1)
+            ->limit(2)
             ->get();
 
-        return isset($row[0]->id) ? $this->decToLink($row->id) : null;
+        return isset($row[1]->id) ? $this->decToLink($row[1]->id) : null;
     }
 
     /**
