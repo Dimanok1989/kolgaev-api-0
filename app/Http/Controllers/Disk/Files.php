@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Disk;
 
+use App\Events\Disk\UpdateFile;
 use App\Http\Controllers\Disk\Thumbs\Images;
 use App\Models\DiskFile;
 use Illuminate\Http\Request;
@@ -201,8 +202,12 @@ class Files extends Disk
         $row->name = $row->ext ? Str::finish($request->name, ".{$row->ext}") : $request->name;
         $row->save();
 
+        $row = $this->serialize($row);
+
+        broadcast(new UpdateFile($row))->toOthers();
+
         return response()->json([
-            'row' => $this->serialize($row),
+            'row' => $row,
         ]);
     }
 }
