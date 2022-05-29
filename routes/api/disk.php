@@ -8,6 +8,12 @@ Route::get('/', 'Disk\Disk@index');
 /** Файлы пользователя */
 Route::get('files', 'Disk\Files@index');
 
+/** Выводит информацию о файле */
+Route::get('file', 'Disk\Files@get');
+
+/** Смена имени файла */
+Route::post('file/rename', 'Disk\Files@rename');
+
 /** Загрузка файла */
 Route::put('upload', 'Disk\Upload');
 

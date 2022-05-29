@@ -38,7 +38,25 @@ class Files extends Disk
             'dir' => $dir_id,
             'files' => $files,
             'page' => $request->page ?: 1,
-            'breadcrumbs' => $this->getBreadCrumbs($request->dir ?: ""),
+            'breadcrumbs' => $request->dir ? $this->getBreadCrumbs($request->dir) : [],
+        ]);
+    }
+
+    /**
+     * Выводит информацию о файле
+     * 
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * 
+     * @todo Дополнить проверку права доступа к файлу
+     */
+    public function get(Request $request)
+    {
+        if (!$row = DiskFile::find($request->id))
+            return response()->json(['message' => "Файл не найден или уже удалён"], 400);
+
+        return response()->json([
+            'row' => $this->serialize($row),
         ]);
     }
 
@@ -73,6 +91,12 @@ class Files extends Disk
 
         $row->is_video = $this->is_video($row->mime_type);
         $row->is_image = $this->is_image($row->mime_type);
+
+        // $row->name_full = $row->name;
+
+        // if ($row->ext) {
+        //     $row->name = Str::replaceLast(".{$row->ext}", "", $row->name_full);
+        // }
 
         return $row->toArray();
     }
@@ -158,5 +182,27 @@ class Files extends Disk
         }
 
         return $name;
+    }
+
+    /**
+     * Смена имени файла
+     * 
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function rename(Request $request)
+    {
+        if (!$request->name)
+            return response()->json(['message' => "Не указано имя файла"], 400);
+
+        if (!$row = DiskFile::find($request->id))
+            return response()->json(['message' => "Файл не найден или уже удалён"], 400);
+
+        $row->name = $row->ext ? Str::finish($request->name, ".{$row->ext}") : $request->name;
+        $row->save();
+
+        return response()->json([
+            'row' => $this->serialize($row),
+        ]);
     }
 }

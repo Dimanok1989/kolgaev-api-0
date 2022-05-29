@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DiskFile;
 use App\Models\DiskMainDir;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class Disk extends Controller
 {
@@ -120,6 +121,9 @@ class Disk extends Controller
     {
         if (!$row = DiskFile::find($id))
             return null;
+
+        if (Str::of($row->name)->is('system_dir_user_*'))
+            $row->name = "Файлы";
 
         $row->link = $this->decToLink($row->id);
 

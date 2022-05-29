@@ -20,7 +20,8 @@ class Images extends Controller
      */
     public function check(Request $request)
     {
-        $folder_id = is_string($request->input('folder')) ? $this->linkToDec($request->input('folder')) : null;
+        $path = is_string($request->input('folder')) ? $request->input('folder') : "";
+        $folder_id = Disk::getFolderIdFromPath($path);
 
         if ($folder_id === 0)
             $folder_id = Disk::getUserMainDirId($request->user()->id);
@@ -110,6 +111,9 @@ class Images extends Controller
 
         if ($row instanceof JsonResponse)
             return $row;
+
+        $row->views++;
+        $row->save();
 
         $path = env("DRIVE_DIR", "drive") . "/" . $row->dir . "/thumbs/" . $row->thumb_middle;
 
