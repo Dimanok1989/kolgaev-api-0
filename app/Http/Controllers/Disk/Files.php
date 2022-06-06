@@ -210,4 +210,28 @@ class Files extends Disk
             'row' => $row,
         ]);
     }
+
+    /**
+     * Удаление файла
+     * 
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function delete(Request $request)
+    {
+        if (!$row = DiskFile::find($request->id))
+            return response()->json(['message' => "Файл не найден или уже удалён"], 400);
+
+        $row->delete();
+
+        $row = $this->serialize($row);
+
+        broadcast(new UpdateFile($row))->toOthers();
+
+        return response()->json([
+            'message' => "Файл перемещен в корзину",
+            'row' => $row,
+            'id' => (int) $request->id,
+        ]);
+    }
 }

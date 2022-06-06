@@ -14,6 +14,9 @@ Route::get('file', 'Disk\Files@get');
 /** Смена имени файла */
 Route::post('file/rename', 'Disk\Files@rename');
 
+/** Удаление файла */
+Route::delete('file/delete', 'Disk\Files@delete');
+
 /** Загрузка файла */
 Route::put('upload', 'Disk\Upload');
 
