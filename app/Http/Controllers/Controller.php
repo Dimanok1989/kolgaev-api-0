@@ -17,7 +17,7 @@ class Controller extends BaseController
      * @param  string|null $link
      * @return int
      */
-    static function linkToDec($link = null)
+    public static function linkToDec($link = null)
     {
         if (!$link)
             return 0;
@@ -47,7 +47,7 @@ class Controller extends BaseController
      * @param  int $id
      * @return string
      */
-    static function decToLink($id)
+    public static function decToLink($id)
     {
         $digits = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $link = '';

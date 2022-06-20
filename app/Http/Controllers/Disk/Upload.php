@@ -135,7 +135,7 @@ class Upload extends Controller
      * @param  array $parts
      * @return string
      */
-    public function getPath(...$parts)
+    public static function getPath(...$parts)
     {
         return Str::replace("//", "/", implode("/", $parts));
     }

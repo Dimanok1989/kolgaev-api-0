@@ -20,6 +20,9 @@ Route::delete('file/delete', 'Disk\Files@delete');
 /** Загрузка файла */
 Route::put('upload', 'Disk\Upload');
 
+/** Скачивание файла */
+Route::get('download/{id}', 'Disk\Downloads@get');
+
 /** Создание каталога */
 Route::post('folder/create', 'Disk\Files@createFolder');
 

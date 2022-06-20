@@ -93,6 +93,8 @@ class Files extends Disk
         $row->is_video = $this->is_video($row->mime_type);
         $row->is_image = $this->is_image($row->mime_type);
 
+        $row->server = env("APP_URL");
+
         // $row->name_full = $row->name;
 
         // if ($row->ext) {

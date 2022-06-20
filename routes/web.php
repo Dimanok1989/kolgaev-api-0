@@ -17,6 +17,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('file/{id}', 'Disk\Downloads@file')
+    ->middleware(\App\Http\Middleware\CheckAccessFileToken::class);
+
 Route::get('login', function () {
     return abort(404);
 })->name('login');
