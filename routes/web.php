@@ -34,6 +34,3 @@ Route::get('/ip', function (\Illuminate\Http\Request $request) {
         'headers' => $request->header(),
     ]);
 });
-
-/** Обработка хуков телеграм бота */
-Route::any('/tlg{token}', 'Telegram@webhook')->middleware('api');

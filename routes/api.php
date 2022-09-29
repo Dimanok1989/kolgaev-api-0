@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/', 'Main\Start')->middleware('auth:api')->name('app');
 
+
+/** Обработка хуков телеграм бота */
+Route::any('/tlg{token}', 'Telegram@webhook');
+
 /** Авторизация на канале широковещания */
 Route::middleware('auth:api')->post('/broadcasting/auth', function (Request $request) {
     return Broadcast::auth($request);
