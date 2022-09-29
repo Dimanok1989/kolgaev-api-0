@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Telegram\Commands;
 use App\Jobs\TelegramWebHoockJob;
 use App\Models\TelegramIncoming;
 use Illuminate\Http\Request;
@@ -34,5 +35,16 @@ class Telegram
         return response()->json([
             'message' => "Request accepted",
         ]);
+    }
+
+    /**
+     * Поиск команд
+     * 
+     * @param  array $data
+     * @return null
+     */
+    public static function run($data)
+    {
+        return (new Commands)->start($data);
     }
 }

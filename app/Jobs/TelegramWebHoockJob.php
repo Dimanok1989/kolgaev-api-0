@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\Telegram;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Kolgaev\TelegramBot\Telegram;
 
 class TelegramWebHoockJob implements ShouldQueue
 {
@@ -32,12 +32,6 @@ class TelegramWebHoockJob implements ShouldQueue
      */
     public function handle()
     {
-        $data = decrypt($this->income->request_data);
-
-        $telegram = new Telegram(env("TELEGRAM_BOT_TOKEN_FOR_DATA"));
-        $telegram->sendMessage([
-            'chat_id' => $this->income->from_id,
-            'text' => $this->income->id,
-        ]);
+        Telegram::run(decrypt($this->income->request_data));
     }
 }
