@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Telegram\Commands;
 
 use App\Http\Controllers\Telegram\Handler;
+use App\Jobs\TelegramSendMessageJob;
 use App\Models\AllData\Gibdd2Full;
 use App\Models\TelegramAccessChatId;
 use Illuminate\Support\Str;
@@ -41,7 +42,7 @@ class Number extends Handler
             ->get()
             ->each(function ($row) use (&$messages) {
 
-                $message = "*Номер телефона* {$row->phone_number}\n";
+                $message = "*Номер телефона* `{$row->phone_number}`\n";
 
                 if ((bool) $row->gibdd2_car_plate_number)
                     $message .= "*Гос. номер* `{$row->gibdd2_car_plate_number}`\n";
@@ -83,14 +84,14 @@ class Number extends Handler
             });
 
         if ($count = count($rows) > 1) {
-            $this->sendMessage([
+            TelegramSendMessageJob::dispatch([
                 'chat_id' => $chat_id,
                 'text' => "Найдено строк {$count}",
             ]);
         }
 
         foreach ($messages as $message) {
-            $this->sendMessage([
+            TelegramSendMessageJob::dispatch([
                 'chat_id' => $chat_id,
                 'text' => $message,
                 'parse_mode' => "Markdown",
