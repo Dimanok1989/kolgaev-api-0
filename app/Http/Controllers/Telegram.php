@@ -16,10 +16,15 @@ class Telegram extends Controller
      */
     public function webhook(Request $request, $token)
     {
+        $data = $request->all();
+
         $row = new TelegramIncoming;
 
         $row->token = $token;
-        $row->request_data = encrypt($request->all());
+        $row->chat_id = $data['chat']['id'] ?? null;
+        $row->from_id = $data['from']['id'] ?? null;
+        $row->username = $data['from']['username'] ?? null;
+        $row->request_data = encrypt($data);
 
         $row->save();
 
