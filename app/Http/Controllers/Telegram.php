@@ -21,9 +21,9 @@ class Telegram extends Controller
         $row = new TelegramIncoming;
 
         $row->token = $token;
-        $row->chat_id = $data['chat']['id'] ?? null;
-        $row->from_id = $data['from']['id'] ?? null;
-        $row->username = $data['from']['username'] ?? null;
+        $row->chat_id = $data['message']['chat']['id'] ?? null;
+        $row->from_id = $data['message']['from']['id'] ?? null;
+        $row->username = $data['message']['from']['username'] ?? null;
         $row->request_data = encrypt($data);
 
         $row->save();
