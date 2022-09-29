@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TelegramWebHoockJob;
 use App\Models\TelegramIncoming;
 use Illuminate\Http\Request;
 
-class Telegram extends Controller
+class Telegram
 {
     /**
      * Приём входящих обращений
@@ -27,6 +28,8 @@ class Telegram extends Controller
         $row->request_data = encrypt($data);
 
         $row->save();
+
+        TelegramWebHoockJob::dispatch($row);
 
         return response()->json([
             'message' => "Request accepted",
