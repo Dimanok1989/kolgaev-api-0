@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85ea7beba1331001c580fd75b25650aa",
+    "content-hash": "b7f55301cdc347fd1a78e10ebaeb4845",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1212,6 +1212,47 @@
                 }
             ],
             "time": "2021-12-16T16:49:26+00:00"
+        },
+        {
+            "name": "kolgaev/telegram-bot",
+            "version": "v0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Dimanok1989/telegram-bot.git",
+                "reference": "617e9863e4fed282f4159acad9c0911811d24ada"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Dimanok1989/telegram-bot/zipball/617e9863e4fed282f4159acad9c0911811d24ada",
+                "reference": "617e9863e4fed282f4159acad9c0911811d24ada",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.4",
+                "php": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kolgaev\\TelegramBot\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dimanok1989",
+                    "email": "kolgaev@gmail.com"
+                }
+            ],
+            "description": "Telegram API bot for Laravel",
+            "support": {
+                "issues": "https://github.com/Dimanok1989/telegram-bot/issues",
+                "source": "https://github.com/Dimanok1989/telegram-bot/tree/v0.1.1"
+            },
+            "time": "2022-01-24T09:05:12+00:00"
         },
         {
             "name": "laravel/framework",
@@ -9361,5 +9402,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
