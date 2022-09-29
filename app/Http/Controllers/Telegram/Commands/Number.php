@@ -93,6 +93,7 @@ class Number extends Handler
             $this->sendMessage([
                 'chat_id' => $chat_id,
                 'text' => $message,
+                'parse_mode' => "Markdown",
             ]);
         }
 
