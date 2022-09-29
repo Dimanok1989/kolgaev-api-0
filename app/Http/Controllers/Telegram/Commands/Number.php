@@ -83,7 +83,9 @@ class Number extends Handler
                 $messages[] = $message;
             });
 
-        if ($count = count($rows) > 1) {
+        $count = count($rows);
+
+        if ($count > 1) {
             TelegramSendMessageJob::dispatch([
                 'chat_id' => $chat_id,
                 'text' => "Найдено строк {$count}",
