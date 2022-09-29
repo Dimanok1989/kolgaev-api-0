@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Kolgaev\TelegramBot\Telegram;
 
 class TelegramWebHoockJob implements ShouldQueue
 {
@@ -31,10 +32,12 @@ class TelegramWebHoockJob implements ShouldQueue
      */
     public function handle()
     {
-        $bot = new \TelegramBot\Api\Client(env("TELEGRAM_BOT_TOKEN_FOR_DATA"));
+        $data = decrypt($this->income->request_data);
 
-        $bot->command('number', function ($message) use ($bot) {
-            $bot->sendMessage($message->getChat()->getId(), 'pong!');
-        });
+        $telegram = new Telegram(env("TELEGRAM_BOT_TOKEN_FOR_DATA"));
+        $telegram->sendMessage([
+            'chat_id' => $this->income->from_id,
+            'text' => $this->income->id,
+        ]);
     }
 }
