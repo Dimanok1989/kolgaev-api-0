@@ -32,6 +32,8 @@ class TelegramWebHoockJob implements ShouldQueue
      */
     public function handle()
     {
+        set_time_limit(500);
+
         Telegram::run(decrypt($this->income->request_data));
     }
 }

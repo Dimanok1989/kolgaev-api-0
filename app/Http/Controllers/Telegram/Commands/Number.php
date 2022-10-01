@@ -34,7 +34,7 @@ class Number extends Handler
             $number .= $word;
         }
 
-        $number = Str::upper($number);
+        $number = trim(Str::upper($number));
 
         $messages = [];
 
